@@ -1,0 +1,9 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 08e8b92
+_src_path: gh:schwallergroup/copier-liac-minimal
+author_email: simon-dimitrie.lupascu@epfl.ch
+author_name: Lupascu Simon-Dimitrie
+github_org: null
+package_name: pylft_mod
+project_name: PyLFT_MOD
+short_description: Generate M.O. energy diagrams using MolSym and PySCF packages
