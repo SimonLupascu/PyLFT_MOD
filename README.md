@@ -1,4 +1,4 @@
-![Project Logo](assets/banner.png)
+![Project Logo](assets/PyLFT_MODbanner.jpg)
 
 ![Coverage Status](assets/coverage-badge.svg)
 
