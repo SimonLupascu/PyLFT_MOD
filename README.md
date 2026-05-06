@@ -10,6 +10,8 @@ PyLFT_MOD
 
 
 Generate M.O. energy diagrams using MolSym and PySCF packages
+## Theoretical Background
+
 
 ## 🔥 Usage
 
