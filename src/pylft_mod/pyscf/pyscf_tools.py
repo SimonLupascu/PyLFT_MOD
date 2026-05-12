@@ -2,7 +2,6 @@ from pyscf import gto
 from pyscf import dft
 from rdkit import Chem
 from rdkit.Chem import AllChem
-
 #~~~~~~~~~~~~~~~~~~~ dicts required for some info
 
 common_spins = {
@@ -111,26 +110,3 @@ def get_ligand_charge(ligand):
     if ligand not in ligand_charges.keys():
         raise ValueError(f"{ligand} not found in ligand database :( ")
     return ligand_charges[ligand]
-
-def find_spin(spin, d_count):
-    """
-    Returns the spin of the complex based on the type desired
-
-    Parameters
-    ----------
-    spin : str
-        How the spin of the complex will be determined, either by the system ('Auto') or by the user ('High', 'Low')
-
-    Returns
-    -------
-    int
-        Spin of the complex times two, as used by the pyscf package
-
-    Raises
-    ------
-    N/A
-    """
-    if spin == 'auto':
-        return int(common_spins[d_count]*2)                         ### May come back to later!!!!!!
-    ##else:
-        ##return spin

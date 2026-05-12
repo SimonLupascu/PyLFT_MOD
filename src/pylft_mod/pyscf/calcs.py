@@ -3,10 +3,11 @@ from pyscf import dft
 from rdkit import Chem
 from rdkit.Chem import AllChem
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from pyscf_tools import get_d_count, get_ligand_charge, find_spin
+from PyLFT_MOD.src.pylft_mod.distortions import get_spin_state
+from pyscf_tools import get_d_count, get_ligand_charge
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods begin here
-def build_complex(atoms, metal, ligands, ox_state, spin = 'auto', basis = 'def2-svp'):
+def build_complex(atoms, metal, ligands, ox_state, basis = 'def2-svp'):
     """
     Returns the mol object upon which further calculations can be performed
 
@@ -20,8 +21,6 @@ def build_complex(atoms, metal, ligands, ox_state, spin = 'auto', basis = 'def2-
         All the ligands coordinated to the metal. Repeats must be mentioned (e.g. ['NH3', 'NH3', 'NH3', 'OH-', 'OH-', 'I-'])
     ox_state : int
         The oxidation state of the metal center
-    spin : str
-        How the spin of the complex will be determined, either by the system ('Auto') or by the user ('High', 'Low'). Automatically set to 'Auto'
     basis : str
         The basis set for the orbitals (e.g. 'sto-3g' for slater type orbital app. with three gaussians) Automatically set to 'def2-svp' for complex calcs due to complexity of d orbitals
 
@@ -37,7 +36,7 @@ def build_complex(atoms, metal, ligands, ox_state, spin = 'auto', basis = 'def2-
     mol = gto.Mole()
     mol.atom = atoms
     mol.charge = ox_state + sum(get_ligand_charge(lig) for lig in ligands)
-    mol.spin = find_spin(spin, get_d_count(metal, ox_state))
+    mol.spin = get_spin_state(metal, get_d_count(metal, ox_state), ligands)
     mol.basis = basis
     mol.build()
     return mol
