@@ -3,8 +3,8 @@ from pyscf import dft
 from rdkit import Chem
 from rdkit.Chem import AllChem
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from PyLFT_MOD.src.pylft_mod.distortions import get_spin_state
-from pyscf_tools import get_d_count, get_ligand_charge
+from PyLFT_MOD.src.pylft_mod.distortions import classify_distortion
+from pyscf_tools import get_d_count, get_ligand_charge, find_spin
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods begin here
 def build_complex(atoms, metal, ligands, ox_state, basis = 'def2-svp'):
@@ -35,8 +35,12 @@ def build_complex(atoms, metal, ligands, ox_state, basis = 'def2-svp'):
     """
     mol = gto.Mole()
     mol.atom = atoms
+    if classify_distortion(metal, ox_state, ligands)['target_group'] != None:
+        mol.symmetry = False
+    else:
+        mol.symmetry = True
     mol.charge = ox_state + sum(get_ligand_charge(lig) for lig in ligands)
-    mol.spin = get_spin_state(metal, get_d_count(metal, ox_state), ligands)
+    mol.spin = find_spin(metal, get_d_count(metal, ox_state), ligands)
     mol.basis = basis
     mol.build()
     return mol
