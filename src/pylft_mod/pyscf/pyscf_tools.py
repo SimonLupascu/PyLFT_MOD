@@ -2,21 +2,34 @@ from pyscf import gto
 from pyscf import dft
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from PyLFT_MOD.src.pylft_mod.distortions import get_spin_state
 #~~~~~~~~~~~~~~~~~~~ dicts required for some info
-
-common_spins = {
-        0 : 0,
-        1 : 0.5,
-        2 : 1,
-        3 : 1.5,
+high_spins = {
         4 : 2,
         5 : 2.5,
         6 : 2,
         7 : 1.5,
+        0 : 0,
+        1 : 0.5,
+        2 : 1,
+        3 : 1.5,
         8 : 1,
         9 : 0.5,
         10 : 0
-    }
+}
+low_spins = {
+        4: 1,
+        5: 0.5,
+        6: 0,
+        7: 0.5,
+        0 : 0,
+        1 : 0.5,
+        2 : 1,
+        3 : 1.5,
+        8 : 1,
+        9 : 0.5,
+        10 : 0
+}
 ligand_charges = {
         'I-': -1,
         'Br-': -1,
@@ -61,7 +74,7 @@ d_electrons = {
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods begin here
-def get_d_count(metal, ox_state):
+def get_d_count_luke(metal, ox_state):
     """
     Returns the d electron count of the metal center given its oxidation state
 
@@ -110,3 +123,27 @@ def get_ligand_charge(ligand):
     if ligand not in ligand_charges.keys():
         raise ValueError(f"{ligand} not found in ligand database :( ")
     return ligand_charges[ligand]
+
+def find_spin(metal, d_count, ligands):
+    """
+    Returns the spin of the complex based on the type desired
+
+    Parameters
+    ----------
+    spin : str
+        How the spin of the complex will be determined, either by the system ('Auto') or by the user ('high', 'low')
+
+    Returns
+    -------
+    int
+        Spin of the complex times two, as used by the pyscf package
+
+    Raises
+    ------
+    N/A
+    """
+    spin = get_spin_state(metal, d_count, ligands)
+    if spin == 'low':
+        return int(low_spins[d_count]*2)
+    else:
+        return int(high_spins[d_count]*2)                       ### May come back to later!!!!!!
