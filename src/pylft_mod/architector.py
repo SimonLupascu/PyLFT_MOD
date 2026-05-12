@@ -50,6 +50,7 @@ def xyz_coordinates(symbols, positions):
     center = positions[0]
     centered_positions = positions - center
 
+    #STACK OVERFLOW --- Builds the table for the coordinates in a good and readable orientation.
     header = f"{'Atom':<4} {'X':>12} {'Y':>12} {'Z':>12}"
     print(header)
     print("-" * 40)
