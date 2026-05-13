@@ -15,6 +15,7 @@ def octahedral_complex(metal: str, ligand: str, oxidation_state: int):
             "coreType": "octahedral",
         },
         #DONT MESS UP THE SMILES NOTATION -- CODE CRASHES OTHERWISE!
+        #LIGAND PROPERTIES ARE REPEATED TO INDICATE EACH CHECK FOR ALL LIGANDS!
         "ligands": [
             {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
             {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
