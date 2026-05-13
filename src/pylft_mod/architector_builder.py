@@ -15,12 +15,14 @@ def octahedral_complex(metal: str, ligand: str, oxidation_state: int):
             "coreType": "octahedral",
         },
         #DONT MESS UP THE SMILES NOTATION -- CODE CRASHES OTHERWISE!
+        #LIGAND PROPERTIES ARE REPEATED TO INDICATE EACH CHECK FOR ALL LIGANDS!
         "ligands": [
-            {
-                "smiles": ligand,
-                "ligandType": "mono",
-                "coordList": [0],
-            }
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
+            {"smiles": ligand, "ligandType": "mono", "coordList": [0]},
         ],
         "parameters": {
             "metal_ox": oxidation_state,
@@ -97,7 +99,7 @@ def main():
         try:
             complex_structure, key = octahedral_complex(metal, ligand, oxidation_state)
         except Exception as e:
-            print(f"\nError: could not build complex. Common causes:")
+            print(f"\nError: could not build complex. Common causes: ")
             print(f"\nTechnical detail: {e}")
             again = input("\nTry again? (y/n): ").strip().lower()
             if again != "y":
