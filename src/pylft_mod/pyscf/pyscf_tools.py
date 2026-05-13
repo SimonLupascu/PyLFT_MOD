@@ -1,7 +1,5 @@
 from pyscf import gto
 from pyscf import dft
-from rdkit import Chem
-from rdkit.Chem import AllChem
 from PyLFT_MOD.src.pylft_mod.distortions import get_spin_state
 #~~~~~~~~~~~~~~~~~~~ dicts required for some info
 high_spins = {

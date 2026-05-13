@@ -1,7 +1,5 @@
 from pyscf import gto
 from pyscf import dft
-from rdkit import Chem
-from rdkit.Chem import AllChem
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods (and  such) begin here
 class MOData:
     '''

@@ -4,7 +4,7 @@ from pylft_mod.symmetry import (
 )
 # Define the weak field and strong field ligands
 STRONG_FIELD = {"CO", "CN-", "NO", "PR3"}
-WEAK_FIELD   = {"H2O", "OH-", "F-", "Cl-", "Br-", "I-"}
+WEAK_FIELD   = {"H2O", "OH-", "F-", "Cl-", "Br-", "I-", "NH3"}
 
 # Define the JT distortions as a fxn of d-count
 JT_TABLE = {
