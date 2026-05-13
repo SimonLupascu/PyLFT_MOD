@@ -9,7 +9,11 @@ requires-python = ">=3.10"
 license = {file = "LICENSE"}
 description = "Generate M.O. energy diagrams using MolSym and PySCF packages"
 dependencies = [
-    # "rdkit",
+    "architector",
+    "pyscf",
+    "molsym",
+    "numpy",
+    "scipy",
 ]
 authors = [
     {name = "Lupascu Simon-Dimitrie", email = "simon-dimitrie.lupascu@epfl.ch"}
