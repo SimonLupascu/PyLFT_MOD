@@ -1,12 +1,20 @@
 
-import molsym
+from pylft_mod.molsym_local import (
+    Molecule, Symtext
+)
+from pylft_mod.molsym_local.symmetrize import symmetrize
 import numpy as np
-from molsym.salcs.spherical_harmonics import SphericalHarmonics
-from molsym.salcs.projection_op import ProjectionOp
+from pylft_mod.molsym_local.salcs.spherical_harmonics import SphericalHarmonics
+from pylft_mod.molsym_local.salcs.projection_op import ProjectionOp
 
-def analyze_symmetry(xyz_file: str) -> dict:
+def analyze_symmetry(xyz_path: str) -> dict:
     """
+    **Main function**
+
     Run full MolSym symmetry analysis on a XYZ file.
+    The function will contain a tolerance parameter (in Angstrom)
+    that dictates how far can an atom be from its symmetry-equivalent
+    position before MolSym considers the symmetry broken
 
     Parameters
     ----------
@@ -19,18 +27,19 @@ def analyze_symmetry(xyz_file: str) -> dict:
         Dictionary of all symmetry data needed downstream.
     """
 
-    mol = molsym.Molecule.from_file(xyz_file)
-    st  = molsym.Symtext.from_molecule(mol) # contains all the symmetry data in a class
+    mol      = Molecule.from_file(xyz_path)
+    mol_sym  = symmetrize(mol, asym_tol=0.1)            # snap atoms to ideal positions
+    st       = Symtext.from_molecule(mol_sym)    # now detects correctly
 
     return {
-        "point_group":     str(st.pg),
-        "order":           st.order,
-        "irreps":          [i.symbol for i in st.irreps],
-        "classes":         list(st.classes),
-        "class_orders":    list(st.class_orders),
+        "point_group":    str(st.pg),
+        "order":          st.order,
+        "irreps":         [i.symbol for i in st.irreps],
+        "classes":        list(st.classes),
+        "class_orders":   list(st.class_orders),
         "character_table": st.character_table,
-        "symtext":         st,
-        "mol":             mol,
+        "symtext":        st,
+        "mol":            mol_sym,   # use symmetrized mol downstream
     }
 
 
