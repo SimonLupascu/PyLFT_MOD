@@ -1,6 +1,6 @@
 from pyscf import gto
 from pyscf import dft
-from PyLFT_MOD.src.pylft_mod.distortions import get_spin_state
+from pylft_mod.distortions import get_spin_state
 #~~~~~~~~~~~~~~~~~~~ dicts required for some info
 high_spins = {
         4 : 2,

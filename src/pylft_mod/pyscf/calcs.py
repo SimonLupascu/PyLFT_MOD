@@ -1,8 +1,8 @@
 from pyscf import gto
 from pyscf import dft
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from PyLFT_MOD.src.pylft_mod.distortions import classify_distortion
-from .pyscf_tools import get_d_count_luke, get_ligand_charge, find_spin
+from pylft_mod.distortions import classify_distortion
+from pylft_mod.pyscf.pyscf_tools import get_d_count_luke, get_ligand_charge, find_spin
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods begin here
 def build_complex(atoms, metal, ligands, ox_state, basis = 'def2-svp'):
