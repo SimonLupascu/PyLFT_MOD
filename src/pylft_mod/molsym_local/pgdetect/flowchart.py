@@ -79,7 +79,7 @@ def find_point_group(mol):
             Cn = highest_order_axis(rots)
             paxis = rots[0].axis
             if Cn == 2:
-                from .flowchart_helper import find_Cn_given_axis
+                # from .flowchart_helper import find_Cn_given_axis
                 for candidate in rots:
                     for n in [6, 5, 4, 3]:
                         Sn_mat = rotation_matrix(candidate.axis, 2*np.pi/n)

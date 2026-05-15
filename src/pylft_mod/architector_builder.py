@@ -8,7 +8,29 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 for old_file in glob.glob(os.path.join(BASE_DIR, "*_oct.xyz")):
     os.remove(old_file)
 
-def octahedral_complex(metal: str, ligand: str, oxidation_state: int):
+def octahedral_complex(metal: str, ligand: str, oxidation_state: int) -> tuple[dict, str]:
+    """
+    Builds an octahedral complex for the given metal, ligand, and oxidation state.
+
+    Parameters
+    ----------
+    metal : str
+        Metal symbol (e.g. "Fe", "Co", etc.)
+    ligand : str
+        Ligand in SMILES format (e.g. "[OH2]", "[NH3]", "[F-]", "[Cl-]", "[C-]#[O+]")
+    oxidation_state : int
+        Oxidation state of the metal (e.g. 2 for Fe(II), 3 for Fe(III), etc.)
+
+    Returns
+    -------
+    complex_structure : dict
+        Dictionary containing the complex structure information, including:
+        - mol2string: string representation of the molecule in MOL2 format
+        - other relevant data from Architector output
+    key : str
+        Key corresponding to the built complex in the Architector output dictionary.
+    """
+
     my_input = {
         "core": {
             "metal": metal,
@@ -41,14 +63,45 @@ def octahedral_complex(metal: str, ligand: str, oxidation_state: int):
 
     return complex_structure, key
 
-def symbols_and_positions(complex_structure):
+def symbols_and_positions(complex_structure: dict) -> tuple[list, np.ndarray, object]:
+    """Converts the MOL2 string from Architector output into symbols and positions.
+    
+    Parameters
+    ----------
+    complex_structure : dict
+        Dictionary containing the complex structure information from Architector output, including:
+        - mol2string: string representation of the molecule in MOL2 format
+
+    Returns
+    -------
+    symbols : list
+        List of atomic symbols for each atom in the complex
+    positions : np.ndarray
+        (N,3) array of atomic positions in Angstrom units
+    moles : Molecule object
+        Molecule object containing the complex structure information, including symbols and positions.
+    """
+
     moles = convert_io_molecule(complex_structure["mol2string"])
     symbols = moles.ase_atoms.get_chemical_symbols()
     positions = moles.ase_atoms.get_positions()  # (N,3) array, Angstrom units SOS!
 
     return symbols, positions, moles
 
-def xyz_coordinates(symbols, positions):
+def xyz_coordinates(symbols: list, positions: np.ndarray) -> None:
+    """Prints the XYZ coordinates of the complex, centered on the metal atom.
+
+    Parameters
+    ----------
+    symbols : list
+        List of atomic symbols for each atom in the complex
+    positions : np.ndarray
+        (N,3) array of atomic positions in Angstrom units
+
+    Returns
+    -------
+    None
+    """
     center = positions[0]
     centered_positions = positions - center
 
@@ -60,8 +113,24 @@ def xyz_coordinates(symbols, positions):
     for sym, pos in zip(symbols, centered_positions):
         print(f"{sym:<4} {pos[0]:12.6f} {pos[1]:12.6f} {pos[2]:12.6f}")
 
-def save_file(symbols, positions, filename):
-    """Write a metal-centred XYZ file."""
+def save_file(symbols: list, positions: np.ndarray, filename: str) -> None:
+    """Write a metal-centred XYZ file. The first line is the number of atoms,
+    the second line is a comment, and the following lines contain the element symbol
+    and x, y, z coordinates for each atom.
+    
+    Parameters
+    ----------
+    symbols : list
+        List of atomic symbols for each atom in the complex
+    positions : np.ndarray
+        (N,3) array of atomic positions in Angstrom units
+    filename : str
+        Name of the XYZ file to save, including path if necessary
+    
+    Returns
+    -------
+    None
+    """
 
     center = positions[0]
     centered_positions = positions - center

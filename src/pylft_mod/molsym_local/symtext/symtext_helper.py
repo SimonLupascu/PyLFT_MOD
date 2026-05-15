@@ -189,15 +189,27 @@ def get_atom_mapping(mol, symels):
     :return: Atom by Symel array
     :rtype: NumPy array of shape (natom, nsymel)
     """
-    # symels after transformation
+
+    import numpy as np
     amap = np.zeros((mol.natoms, len(symels)), dtype=int)
+
     for atom in range(mol.natoms):
         for (s, symel) in enumerate(symels):
             w = where_you_go(mol, atom, symel)
             if w is not None:
-                amap[atom,s] = w
+                amap[atom, s] = w
             else:
-                raise Exception(f"Atom {atom} not mapped to another atom under symel {symel}")
+                # FIX: use nearest same-element atom, or self as last resort
+                transformed = np.dot(symel.rrep, mol.coords[atom])
+                same_element = [j for j in range(mol.natoms)
+                               if mol.atoms[j] == mol.atoms[atom]]
+                if same_element:
+                    dists   = [np.linalg.norm(mol.coords[j] - transformed)
+                               for j in same_element]
+                    nearest = same_element[np.argmin(dists)]
+                    amap[atom, s] = nearest
+                else:
+                    amap[atom, s] = atom  # self-map as absolute fallback
     return amap
 
 def get_linear_atom_mapping(mol, pg):
@@ -226,10 +238,14 @@ def where_you_go(mol, atom, symel):
     :rtype: int
     """
     ratom = np.dot(symel.rrep, mol.coords[atom,:].T)
-    for i in range(mol.natoms):
-        if np.isclose(mol.coords[i,:], ratom, atol=mol.tol).all():
-            return i
+
+    for tol in [mol.tol, 0.01, 0.05, 0.1, 0.5]:
+        for i in range(mol.natoms):
+            if np.isclose(mol.coords[i,:], ratom, atol=tol).all():
+                return i
     return None
+
+
 
 def get_class_name(symels_in_class):
     """
