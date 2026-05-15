@@ -33,12 +33,13 @@ def build_modat(mf):
     """
     energy = mf.mo_energy
     coeffs = mf.mo_coeff
-    if mf.mo_coeff.ndim == 1:
-        coeffs = mf.mo_coeff
-    else: 
-        coeffs = mf.mo_coeff[0]
+    occs = mf.mo_occ
     if mf.mo_energy.ndim == 1:
         energy = mf.mo_energy
+        coeffs = mf.mo_coeff
+        occs = mf.mo_occ
     else:
         energy = mf.mo_energy[0]
-    return  MOData(energy*27.211, mf.mo_occ, coeffs, mf.mol.ao_labels())
+        coeffs = mf.mo_coeff[0]
+        occs = mf.mo_occ[0]
+    return  MOData(energy*27.211, occs, coeffs, mf.mol.ao_labels())

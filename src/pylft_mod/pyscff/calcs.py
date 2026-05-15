@@ -2,7 +2,7 @@ from pyscf import gto
 from pyscf import dft
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 from pylft_mod.distortions import classify_distortion
-from pylft_mod.pyscf.pyscf_tools import get_d_count_luke, get_ligand_charge, find_spin
+from pylft_mod.pyscff.pyscf_tools import get_d_count_luke, get_ligand_charge, find_spin
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~methods begin here
 def build_complex(atoms, metal, ligands, ox_state, basis = 'def2-svp'):
@@ -70,5 +70,8 @@ def get_mf(mol):
     else:
         uks_mf = dft.UKS(mol)
         uks_mf.xc = func
+        uks_mf.level_shift = 0.2
+        uks_mf.diis_space = 12
+        uks_mf.conv_tol = 1e-5
         uks_mf.kernel()
         return uks_mf
