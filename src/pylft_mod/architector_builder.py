@@ -9,7 +9,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 for old_file in glob.glob(os.path.join(BASE_DIR, "*.xyz")):
     os.remove(old_file)
 
-<<<<<<< HEAD
 for old_file in glob.glob(os.path.join(BASE_DIR, "*.mol2")):
     os.remove(old_file)
 
@@ -85,30 +84,6 @@ def find_donor_atom(smiles: str) -> int:
 
 def octahedral_complex(metal, ligand, oxidation_state):
     donor_atom = find_donor_atom(ligand)
-=======
-def octahedral_complex(metal: str, ligand: str, oxidation_state: int) -> tuple[dict, str]:
-    """
-    Builds an octahedral complex for the given metal, ligand, and oxidation state.
-
-    Parameters
-    ----------
-    metal : str
-        Metal symbol (e.g. "Fe", "Co", etc.)
-    ligand : str
-        Ligand in SMILES format (e.g. "[OH2]", "[NH3]", "[F-]", "[Cl-]", "[C-]#[O+]")
-    oxidation_state : int
-        Oxidation state of the metal (e.g. 2 for Fe(II), 3 for Fe(III), etc.)
-
-    Returns
-    -------
-    complex_structure : dict
-        Dictionary containing the complex structure information, including:
-        - mol2string: string representation of the molecule in MOL2 format
-        - other relevant data from Architector output
-    key : str
-        Key corresponding to the built complex in the Architector output dictionary.
-    """
->>>>>>> 05c55749e484fe843f22b4152a93968ed40b771e
 
     my_input = {
         "core": {
@@ -143,7 +118,6 @@ def octahedral_complex(metal: str, ligand: str, oxidation_state: int) -> tuple[d
 
     return complex_structure, key
 
-<<<<<<< HEAD
 
 def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
     donor_a = find_donor_atom(ligand_a)
@@ -223,48 +197,6 @@ def symbols_and_positions(complex_structure):
 
 def xyz_coordinates(symbols, positions):
     center             = positions[0]
-=======
-def symbols_and_positions(complex_structure: dict) -> tuple[list, np.ndarray, object]:
-    """Converts the MOL2 string from Architector output into symbols and positions.
-    
-    Parameters
-    ----------
-    complex_structure : dict
-        Dictionary containing the complex structure information from Architector output, including:
-        - mol2string: string representation of the molecule in MOL2 format
-
-    Returns
-    -------
-    symbols : list
-        List of atomic symbols for each atom in the complex
-    positions : np.ndarray
-        (N,3) array of atomic positions in Angstrom units
-    moles : Molecule object
-        Molecule object containing the complex structure information, including symbols and positions.
-    """
-
-    moles = convert_io_molecule(complex_structure["mol2string"])
-    symbols = moles.ase_atoms.get_chemical_symbols()
-    positions = moles.ase_atoms.get_positions()  # (N,3) array, Angstrom units SOS!
-
-    return symbols, positions, moles
-
-def xyz_coordinates(symbols: list, positions: np.ndarray) -> None:
-    """Prints the XYZ coordinates of the complex, centered on the metal atom.
-
-    Parameters
-    ----------
-    symbols : list
-        List of atomic symbols for each atom in the complex
-    positions : np.ndarray
-        (N,3) array of atomic positions in Angstrom units
-
-    Returns
-    -------
-    None
-    """
-    center = positions[0]
->>>>>>> 05c55749e484fe843f22b4152a93968ed40b771e
     centered_positions = positions - center
 
     #Check stack overflow bibliography
@@ -275,27 +207,6 @@ def xyz_coordinates(symbols: list, positions: np.ndarray) -> None:
     for sym, pos in zip(symbols, centered_positions):
         print(f"{sym:<4} {pos[0]:12.6f} {pos[1]:12.6f} {pos[2]:12.6f}")
 
-<<<<<<< HEAD
-=======
-def save_file(symbols: list, positions: np.ndarray, filename: str) -> None:
-    """Write a metal-centred XYZ file. The first line is the number of atoms,
-    the second line is a comment, and the following lines contain the element symbol
-    and x, y, z coordinates for each atom.
-    
-    Parameters
-    ----------
-    symbols : list
-        List of atomic symbols for each atom in the complex
-    positions : np.ndarray
-        (N,3) array of atomic positions in Angstrom units
-    filename : str
-        Name of the XYZ file to save, including path if necessary
-    
-    Returns
-    -------
-    None
-    """
->>>>>>> 05c55749e484fe843f22b4152a93968ed40b771e
 
 def save_file(symbols, positions, filename):
     # Write a metal-centred XYZ file
