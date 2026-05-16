@@ -9,19 +9,19 @@ from pylft_mod.molsym_local.salcs.projection_op import ProjectionOp
 
 DONOR_ATOM = {
     # Strong field
-    "CO":   "C",    # carbon binds to metal
-    "CN-":  "C",    # carbon end binds
-    "NO":   "N",
-    "PR3":  "P",
+    "[CO]":   "C",    # carbon binds to metal
+    "[CN-]":  "C",    # carbon end binds
+    "[NO]":   "N",
+    "[PR3]":  "P",
     # Weak field
-    "H2O":  "O",
-    "OH2":  "O",
-    "OH-":  "O",
-    "F-":   "F",
-    "Cl-":  "Cl",
-    "Br-":  "Br",
-    "I-":   "I",
-    "NH3":  "N",
+    "[H2O]":  "O",
+    "[OH2]":  "O",
+    "[OH-]":  "O",
+    "[F-]":   "F",
+    "[Cl-]":  "Cl",
+    "[Br-]":  "Br",
+    "[I-]":   "I",
+    "[NH3]":  "N",
 }
 
 ALL_LIGANDS = {**{k: v for k,v in DONOR_ATOM.items()}}

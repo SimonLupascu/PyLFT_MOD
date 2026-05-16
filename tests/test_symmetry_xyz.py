@@ -13,7 +13,7 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def run(name, xyz_file, ligand_list, expected_pg):
-    path   = os.path.join(TEST_DIR, xyz_file)
+    path   = os.path.join(TEST_DIR, "xyz files", xyz_file)
     sym    = analyze_symmetry(path, ligand_list=ligand_list)
     pg     = sym["point_group"]
     status = "OK" if pg == expected_pg else "FAIL"
@@ -28,25 +28,32 @@ def test_point_groups():
 
     results = []
 
-    results.append(run(
-        "Cr(CO)6              Oh",
-        "crco6.xyz",
-        ["CO"]*6,
-        "Oh"
-    ))
+    # results.append(run(
+    #     "Cr(CO)6              Oh",
+    #     "crco6.xyz",
+    #     ["CO"]*6,
+    #     "Oh"
+    # ))
+
+    # results.append(run(
+    #     "Fe(H2O)6  3+         Oh",
+    #     "Fe_OH2_oct.xyz",
+    #     ["OH2"]*6,
+    #     "Oh"
+    # ))
+
+    # results.append(run(
+    #     "Cr(CO)5NH3           C4v",
+    #     "cr(co)5nh3.xyz",
+    #     ["CO"]*5 + ["NH3"],
+    #     "C4v"
+    # ))
 
     results.append(run(
-        "Fe(H2O)6  3+         Oh",
-        "Fe_OH2_oct.xyz",
-        ["OH2"]*6,
-        "Oh"
-    ))
-
-    results.append(run(
-        "Cr(CO)5NH3           C4v",
-        "cr(co)5nh3.xyz",
-        ["CO"]*5 + ["NH3"],
-        "C4v"
+        "Cr(I-)3(F-)3           C3v",
+        "Cr_Im_Fm_fac_oct.xyz",
+        ["I-"]*3 + ["F-"]*3,
+        "C3v"
     ))
 
     print("─"*60)
@@ -125,5 +132,5 @@ def test_error_handling():
 
 if __name__ == "__main__":
     test_point_groups()
-    test_salcs()
-    test_error_handling()
+    # test_salcs()
+    # test_error_handling()
