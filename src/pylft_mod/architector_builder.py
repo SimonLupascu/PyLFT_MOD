@@ -2,6 +2,7 @@ import numpy as np
 from architector import build_complex, convert_io_molecule
 import os, glob
 from rdkit import Chem
+from distortions import classify_distortion
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -69,6 +70,21 @@ ligand_charge = {
     "[NH3]": 0
 }
 
+smiles_to_name = {
+    "[C-]#[O+]": "CO",
+    "[C-]#N": "CN-",
+    "[N]=O": "NO",
+    "CP(C)C": "PR3",
+    "[OH2]": "OH2",
+    "[OH-]": "OH-",
+    "[F-]": "F-",
+    "[Cl-]": "Cl-",
+    "[Br-]": "Br-",
+    "[I-]": "I-",
+    "[NH3]": "NH3",
+    "N": "NH3"
+}
+
 def calculate_complex_charge(metal_oxidation, ligands_used):
 
     total_ligand_charge = 0 
@@ -106,10 +122,30 @@ def find_donor_atom(smiles: str) -> int:
 
     return best_index
 
+def get_unpaired_electrons(d_count, spin):
+    # Number of unpaired electrons based on d-count and spin state
+    if spin == "high":
+        return d_count if d_count <= 5 else 10 - d_count
+    else:  # low spin
+        if d_count <= 3:
+            return d_count
+        elif d_count <= 6:
+            return 6 - d_count
+        elif d_count <= 8:
+            return d_count - 6
+        else:
+            return 10 - d_count
 
 def octahedral_complex(metal, ligand, oxidation_state):
     donor_atom = find_donor_atom(ligand)
     total_charge = calculate_complex_charge(oxidation_state, [ligand] * 6)
+
+    ligand_name = smiles_to_name.get(ligand, ligand)
+    info        = classify_distortion(metal, oxidation_state, [ligand_name] * 6)
+    metal_spin  = get_unpaired_electrons(info["d_count"], info["spin"])
+
+    print(f"  Spin state: {info['spin']} | Unpaired electrons: {metal_spin}")
+    print(f"  Distortion: {info['distortion']} | {info['notes']}")
 
     my_input = {
         "core": {
@@ -128,17 +164,16 @@ def octahedral_complex(metal, ligand, oxidation_state):
         ],
         "parameters": {
             "metal_ox": oxidation_state,
-            "full_charge": total_charge,
+            "metal_spin": metal_spin,
             "return_only_1": True,
             "relax": True,
             "force_generation": True,  # forces construction to proceed even if difficult
-            "full_method": "GFN2-xTB",
+            "full_method": "GFN2-xTB"
         }
     }
 
-    total_charge = calculate_complex_charge(oxidation_state, [ligand] * 6)
     print(f"\nBuilding [{metal}({ligand})6] | metal ox: +{oxidation_state} | complex charge: {total_charge} ...")
-    
+
     out = build_complex(my_input)
 
     key               = list(out.keys())[0]
@@ -151,6 +186,14 @@ def octahedral_complex(metal, ligand, oxidation_state):
 def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
     donor_a = find_donor_atom(ligand_a)
     donor_b = find_donor_atom(ligand_b)
+
+    name_a = smiles_to_name.get(ligand_a, ligand_a)
+    name_b = smiles_to_name.get(ligand_b, ligand_b)
+    info   = classify_distortion(metal, oxidation_state, [name_a, name_b])
+    metal_spin = get_unpaired_electrons(info["d_count"], info["spin"])
+
+    print(f"  Spin state: {info['spin']} | Unpaired electrons: {metal_spin}")
+    print(f"  Distortion: {info['distortion']} | {info['notes']}")
 
     if isomer == "none":
         # Let Architector decide the geometry freely
@@ -168,6 +211,17 @@ def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
         count_a = 2 if isomer in ("cis", "trans") else 3
         count_b = 6 - count_a
 
+
+    ligands_used = [ligand_a] * count_a + [ligand_b] * count_b
+    total_charge = calculate_complex_charge(oxidation_state, ligands_used)
+
+    if total_charge < -2:
+        relax_setting = False
+        method        = "GFN-FF"
+        print(f"  Note: complex charge is {total_charge}, using GFN-FF (xTB cannot converge on this).")
+    else:
+        relax_setting = True
+        method        = "GFN2-xTB"
 
         ligands = []
         for i in range(count_a):
@@ -188,9 +242,6 @@ def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
             "coordList": vectors,   # hand Architector the exact 3D positions
         }
 
-    ligands_used = [ligand_a] * count_a + [ligand_b] * count_b
-    total_charge = calculate_complex_charge(oxidation_state, ligands_used)
-
     print(f"\nBuilding [{metal}({ligand_a})_{count_a}({ligand_b})_{count_b}] | isomer: {isomer} | metal ox: +{oxidation_state} | complex charge: {total_charge} ...")
 
     my_input = {
@@ -198,7 +249,7 @@ def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
         "ligands": ligands,
         "parameters": {
             "metal_ox": oxidation_state,
-            "full_charge": total_charge,
+            "metal_spin": metal_spin,
             "return_only_1": True,
             "relax": True,
             "force_generation": True,
@@ -370,6 +421,8 @@ def main():
             try:
                 complex_structure, key = octahedral_complex(metal, ligand, oxidation_state)
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 print(f"\nError: could not build complex.")
                 print(f"Technical detail: {e}")
                 again = input("Try again? (y/n): ").strip().lower()
@@ -386,6 +439,8 @@ def main():
                 complex_structure, key = heteroleptic_complex(
                     metal, oxidation_state, ligand_a, ligand_b, isomer)
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 print(f"\nError: could not build complex.")
                 print(f"Technical detail: {e}")
                 again = input("Try again? (y/n): ").strip().lower()
