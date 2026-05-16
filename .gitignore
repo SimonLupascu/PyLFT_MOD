@@ -248,3 +248,5 @@ $RECYCLE.BIN/
 docs/docs_out
 .vscode/settings.json
 MolSym/
+src/pylft_mod/*.xyz
+src/pylft_mod/*.mol2
