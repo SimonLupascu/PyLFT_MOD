@@ -55,6 +55,31 @@ isomer_coord_vectors = {
     ],
 }
 
+ligand_charge = {
+    "[C-]#[O+]": 0,
+    "[C-]#N": -1,
+    "[N]=O": 0,
+    "CP(C)C": 0,
+    "[OH2]": 0,
+    "[OH-]": -1,
+    "[F-]": -1,
+    "[Cl-]": -1,
+    "[Br-]": -1,
+    "[I-]": -1,
+    "[NH3]": 0
+}
+
+def calculate_complex_charge(metal_oxidation, ligands_used):
+
+    total_ligand_charge = 0 
+    for smiles in ligands_used:
+        #use initial charge as 0 if not of the ones stated in ligand_charge
+        charge = ligand_charge.get(smiles, 0) 
+        total_ligand_charge += charge
+    
+    total_charge = metal_oxidation + total_ligand_charge
+    return total_charge
+
 # Definition of each ligand atom's index numbers --- IMPORTANT, otherwise for ligands like
 # P(Me)3 Architector cannot assign a coordination number itself and the code crashes!
 def find_donor_atom(smiles: str) -> int:
@@ -84,6 +109,7 @@ def find_donor_atom(smiles: str) -> int:
 
 def octahedral_complex(metal, ligand, oxidation_state):
     donor_atom = find_donor_atom(ligand)
+    total_charge = calculate_complex_charge(oxidation_state, [ligand] * 6)
 
     my_input = {
         "core": {
@@ -101,15 +127,18 @@ def octahedral_complex(metal, ligand, oxidation_state):
             {"smiles": ligand, "ligType": "mono", "coordList": [donor_atom]},
         ],
         "parameters": {
-            "metal_ox":         oxidation_state,
-            "return_only_1":    True,
-            "relax":            True,
+            "metal_ox": oxidation_state,
+            "full_charge": total_charge,
+            "return_only_1": True,
+            "relax": True,
             "force_generation": True,  # forces construction to proceed even if difficult
-            "full_method":      "GFN2-xTB",
+            "full_method": "GFN2-xTB",
         }
     }
 
-    print(f"\nBuilding [{metal}({ligand})6]{oxidation_state}+ ...")
+    total_charge = calculate_complex_charge(oxidation_state, [ligand] * 6)
+    print(f"\nBuilding [{metal}({ligand})6] | metal ox: +{oxidation_state} | complex charge: {total_charge} ...")
+    
     out = build_complex(my_input)
 
     key               = list(out.keys())[0]
@@ -159,19 +188,22 @@ def heteroleptic_complex(metal, oxidation_state, ligand_a, ligand_b, isomer):
             "coordList": vectors,   # hand Architector the exact 3D positions
         }
 
-    print(f"\nBuilding [{metal}({ligand_a})_{count_a}({ligand_b})_{count_b}]"
-          f"{oxidation_state}+ ({isomer}) ...")
+    ligands_used = [ligand_a] * count_a + [ligand_b] * count_b
+    total_charge = calculate_complex_charge(oxidation_state, ligands_used)
+
+    print(f"\nBuilding [{metal}({ligand_a})_{count_a}({ligand_b})_{count_b}] | isomer: {isomer} | metal ox: +{oxidation_state} | complex charge: {total_charge} ...")
 
     my_input = {
         "core":    core_definition,
         "ligands": ligands,
         "parameters": {
-            "metal_ox":         oxidation_state,
-            "return_only_1":    True,
-            "relax":            True,
+            "metal_ox": oxidation_state,
+            "full_charge": total_charge,
+            "return_only_1": True,
+            "relax": True,
             "force_generation": True,
-            "full_method":      "GFN2-xTB",
-            "n_symmetries":     10,
+            "full_method": "GFN2-xTB",
+            "n_symmetries": 10,
         }
     }
 
