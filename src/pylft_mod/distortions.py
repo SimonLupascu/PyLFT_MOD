@@ -1,4 +1,4 @@
-import molsym
+import pylft_mod.molsym_local
 from pylft_mod.symmetry import (
     analyze_symmetry
 )

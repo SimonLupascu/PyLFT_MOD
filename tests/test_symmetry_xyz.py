@@ -28,12 +28,16 @@ def test_point_groups():
 
     results = []
 
+    # Oh complex no distortion
+
     # results.append(run(
     #     "Cr(CO)6              Oh",
     #     "crco6.xyz",
     #     ["CO"]*6,
     #     "Oh"
     # ))
+
+    # Oh complex with weak JT distortion
 
     # results.append(run(
     #     "Fe(H2O)6  3+         Oh",
@@ -42,6 +46,8 @@ def test_point_groups():
     #     "Oh"
     # ))
 
+    # Octahedral complex with one ligand subtituted --> from Oh to C4v
+
     # results.append(run(
     #     "Cr(CO)5NH3           C4v",
     #     "cr(co)5nh3.xyz",
@@ -49,12 +55,23 @@ def test_point_groups():
     #     "C4v"
     # ))
 
-    results.append(run(
-        "Cr(I-)3(F-)3           C3v",
-        "Cr_Im_Fm_fac_oct.xyz",
-        ["I-"]*3 + ["F-"]*3,
-        "C3v"
-    ))
+    # Octahedral complex with 3 ligands subtituted in facial stereochemistry --> from Oh to C3v
+
+    # results.append(run(
+    #     "Cr(I-)3(F-)3           C3v",
+    #     "Cr_Im_Fm_fac_oct.xyz",
+    #     ["I-"]*3 + ["F-"]*3,
+    #     "C3v"
+    # ))
+
+    # Octahedral complex with 3 ligands subtituted in meridional stereochemistry --> from Oh to C2v
+
+    # results.append(run(
+    #     "Fe(CN-)3(CO)3              C2v",
+    #     "Fe_CmN_CmOp_mer_oct.xyz",
+    #     ["[CN-]"]*3 + ["[CO]"]*3,
+    #     "C2v"
+    # ))
 
     print("─"*60)
     passed = sum(results)

@@ -2,7 +2,7 @@ import numpy as np
 from architector import build_complex, convert_io_molecule
 import os, glob
 from rdkit import Chem
-from distortions import classify_distortion
+from pylft_mod.distortions import classify_distortion
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
